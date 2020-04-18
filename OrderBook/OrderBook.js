@@ -1,11 +1,12 @@
 const { ACTION, ORDER_TYPE } = require("../constants");
 class OrderBook {
-    constructor(openingPrice) {
+    constructor(symbol, openingPrice) {
         this.openingPrice = openingPrice;
+        this.symbol = symbol;
         this.bidQueue = new PriorityQueue(bidCompare);
         this.askQueue = new PriorityQueue(askCompare);
         this.currentPrice = openingPrice;
-        this.executedOrders = [];
+        this.trades = [];
     }
 
     addOrder(newOrder) {
@@ -48,8 +49,8 @@ class OrderBook {
             else tradePrice = this.openingPrice;
 
             let minQty = Math.min(askOrder.quantity, bidOrder.quantity);
-            this.executedOrders.push(
-                new ExecutedOrder(
+            this.trades.push(
+                new Trade(
                     bidOrder.orderId,
                     askOrder.orderId,
                     tradePrice,
@@ -76,3 +77,5 @@ class OrderBook {
         return res;
     }
 }
+
+module.exports = OrderBook;

@@ -1,7 +1,7 @@
 const { ORDER_TYPE, STATUS } = require("../constants");
 class Order {
-    constructor(productId, orderType, action, quantity, price) {
-        this.orderId = v4();
+    constructor(orderId, productId, orderType, action, quantity, price) {
+        this.orderId = orderId;
         this.productId = productId;
         this.orderType = orderType;
         this.createdAt = Date.now();
