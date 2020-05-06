@@ -37,7 +37,7 @@ const tradeSchema = new mongoose.Schema(
         quantity: {
             type: Number,
             required: true,
-        }s
+        },
     },
     { timestamps }
 );

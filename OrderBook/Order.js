@@ -47,3 +47,4 @@ class Order {
         return res;
     }
 }
+module.exports = Order;

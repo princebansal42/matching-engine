@@ -35,16 +35,16 @@ class PriorityQueue {
 
         if (largest !== index) {
             [items[largest], items[index]] = [items[index], items[largest]];
-            heapify_down(largest);
-        }
+            return heapify_down(largest);
+        } else return index;
     }
     heapify_up(index) {
         const { heapify_up, parent, comparator, items } = this;
         let p = parent(index);
         if (p >= 0 && comparator(items[index], items[p])) {
             [items[index], items[p]] = [items[p], items[index]];
-            heapify_up(p);
-        }
+            return heapify_up(p);
+        } else return index;
     }
     clear() {
         this.items = [];
@@ -53,7 +53,7 @@ class PriorityQueue {
     enqueue(item) {
         this.items.push(item);
         this.size++;
-        this.heapify_up(this.size - 1);
+        return this.heapify_up(this.size - 1);
     }
     toArray() {
         return [...this.items];
@@ -75,8 +75,9 @@ class PriorityQueue {
         items[index] = items.pop();
         this.size--;
         let p = parent(index);
-        if (p >= 0 && comparator(items[index], items[p])) heapify_up(index);
-        else heapify_down(index);
+        if (p >= 0 && comparator(items[index], items[p]))
+            return heapify_up(index);
+        else return heapify_down(index);
     }
     size() {
         return this.size;

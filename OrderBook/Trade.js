@@ -1,21 +1,20 @@
-class ExecutedOrder {
-    constructor(bidOrderId, askOrderId, tradePrice, time, quantity) {
+class Trade {
+    constructor(bidOrderId, askOrderId,bidOrderUserId,askOrderUserId,  tradePrice, time, quantity) {
         this.bidOrderId = bidOrderId;
         this.askOrderId = askOrderId;
+        this.bidOrderUserId = bidOrderUserId;
+        this.askOrderUserId = askOrderUserId;
         this.tradePrice = tradePrice;
-        this.time = time;
+        this.createdAt = createdAt;
         this.quantity = quantity;
     }
     print() {
         const { askOrderId, bidOrderId, time, tradePrice, quantity } = this;
         const res = JSON.stringify({
-            bidOrderId,
-            askOrderId,
-            time,
-            tradePrice,
-            quantity,
+            ...this
         });
         // console.log(res);
         return res;
     }
 }
+module.exports = Trade;
