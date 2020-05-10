@@ -1,7 +1,7 @@
 const { ORDER_TYPE, STATUS } = require("../constants");
 class Order {
-    constructor(orderId, productId, orderType, action, quantity, price) {
-        this.orderId = orderId;
+    constructor(id, productId, orderType, action, quantity, price) {
+        this.id = id;
         this.productId = productId;
         this.orderType = orderType;
         this.createdAt = Date.now();
@@ -24,7 +24,7 @@ class Order {
 
     print() {
         const {
-            orderId,
+            id,
             productId,
             orderType,
             createdAt,
@@ -34,7 +34,7 @@ class Order {
             status,
         } = this;
         const res = JSON.stringify({
-            orderId,
+            id,
             productId,
             orderType,
             createdAt,

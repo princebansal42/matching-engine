@@ -8,8 +8,12 @@ const ACTION = {
 };
 
 const STATUS = {
-    PENDING: "PENDING",
+    OPEN: "OPEN",
+    PARTIAL: "PARTIAL",
     COMPLETED: "COMPLETED",
+    REJECTED: "REJECTED",
+    CANCELLED: "CANCELLED",
+    EXPIRED: "EXPIRED",
 };
 
 module.exports = {

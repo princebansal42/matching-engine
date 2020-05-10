@@ -5,7 +5,7 @@ const pusher = new Pusher(config.get("APP_KEY"), {
     forceTLS: true,
 });
 
-const channel = pusher.subscribe("channel-1");
+const channel = pusher.subscribe("matching-engine");
 channel.bind("add", function (data) {
     // console.log(data["data"][0]);
     const res = data["data"][0];
