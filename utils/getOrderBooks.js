@@ -3,6 +3,7 @@ const OrderBook = require("../OrderBook/OrderBook");
 const getOrderBooks = async () => {
     try {
         const assets = await Asset.find({});
+        console.log(assets);
         const orderBooks = {};
         for (let i = 0; i < assets.length; i++) {
             const { symbol, ltp } = assets[i];

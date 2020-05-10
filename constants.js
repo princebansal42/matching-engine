@@ -16,8 +16,15 @@ const STATUS = {
     EXPIRED: "EXPIRED",
 };
 
+const ORDER_DURATION = {
+    DAY: "DAY",
+    GTC: "GTC",
+    IOC: "IOC",
+};
+
 module.exports = {
     ORDER_TYPE,
     ACTION,
     STATUS,
+    ORDER_DURATION,
 };

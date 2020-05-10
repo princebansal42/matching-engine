@@ -3,6 +3,10 @@ const Order = require("../models/Order");
 const Asset = require("../models/Asset");
 const Holding = require("../models/Holding");
 const User = require("../models/User");
+const {
+    PriorityQueue,
+    Comparators: { askCompare, bidCompare },
+} = require("../PriorityQueue");
 class OrderBook {
     constructor(symbol, openingPrice) {
         this.openingPrice = openingPrice;

@@ -39,7 +39,7 @@ const tradeSchema = new mongoose.Schema(
             required: true,
         },
     },
-    { timestamps }
+    { timestamps: true }
 );
 
 const Trade = mongoose.model("trade", tradeSchema);

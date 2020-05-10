@@ -6,7 +6,6 @@ const assetSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            set: (s) => s.toUpperCase(),
         },
         tradable: {
             type: Boolean,
@@ -18,7 +17,7 @@ const assetSchema = new mongoose.Schema(
             required: true,
         },
     },
-    { timestamps }
+    { timestamps: true }
 );
 
 const Asset = mongoose.model("asset", assetSchema);

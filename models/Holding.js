@@ -19,9 +19,14 @@ const holdingSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        locked_qty: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
     },
     { timestamps: true }
 );
 
-const Holding = mongoose.model("holding", orderSchema);
+const Holding = mongoose.model("holding", holdingSchema);
 module.exports = Holding;

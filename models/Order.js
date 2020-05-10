@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { ORDER_STATUS, ORDER_DURATION } = require("../constants");
+const { STATUS, ORDER_DURATION } = require("../constants");
 const orderSchema = new mongoose.Schema(
     {
         client_id: {
@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema(
         status: {
             type: String,
             required: true,
-            default: ORDER_STATUS.OPEN,
+            default: STATUS.OPEN,
         },
         // asset_id: {
         //     type: mongoose.Schema.Types.ObjectId,

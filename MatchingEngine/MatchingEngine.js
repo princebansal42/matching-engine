@@ -1,14 +1,24 @@
 const { ACTION, ORDER_TYPE } = require("../constants");
-const { getOrderBooks } = require("../utils/getOrderBooks");
+const getOrderBooks = require("../utils/getOrderBooks");
+
+const OrderBook = require("../OrderBook/OrderBook");
 class MatchingEngine {
     constructor() {
         this.orderBooks = [];
     }
-    async init() {
-        try {
-            this.orderBooks = await getOrderBooks();
-        } catch (err) {
-            console.log(err);
+    // async init(assets) {
+    //     try {
+    //         this.orderBooks = await getOrderBooks();
+    //         console.log(this.orderBooks);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+
+    init(assets) {
+        for (let i = 0; i < assets.length; i++) {
+            const { symbol, ltp } = assets[i];
+            this.orderBooks[symbol] = new OrderBook(symbol, ltp);
         }
     }
     addOrder(order) {
