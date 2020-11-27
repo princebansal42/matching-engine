@@ -21,17 +21,17 @@ class MatchingEngine {
             this.orderBooks[symbol] = new OrderBook(symbol, ltp);
         }
     }
-    addOrder(order) {
+    async addOrder(order) {
         this.orderBooks[order.asset_symbol].addOrder(order);
-        this.orderBooks[order.asset_symbol].orderMatching();
+        await this.orderBooks[order.asset_symbol].orderMatching();
     }
-    editOrder(order) {
+    async editOrder(order) {
         this.orderBooks[order.asset_symbol].editOrder(order);
-        this.orderBooks[order.asset_symbol].orderMatching();
+        await this.orderBooks[order.asset_symbol].orderMatching();
     }
-    cancelOrder(order) {
+    async cancelOrder(order) {
         this.orderBooks[order.asset_symbol].cancelOrder(order);
-        this.orderBooks[order.asset_symbol].orderMatching();
+        await this.orderBooks[order.asset_symbol].orderMatching();
     }
     addAsset(asset) {}
     display() {

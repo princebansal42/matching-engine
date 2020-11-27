@@ -2,6 +2,7 @@ const { ACTION, ORDER_TYPE, STATUS } = require("../constants");
 const Order = require("../models/Order");
 const Asset = require("../models/Asset");
 const Holding = require("../models/Holding");
+const Trade = require("../models/Trade");
 const User = require("../models/User");
 const {
     PriorityQueue,
@@ -21,7 +22,8 @@ class OrderBook {
     async addOrder(newOrder) {
         if (newOrder.action === ACTION.BUY) this.addBidOrder(newOrder);
         if (newOrder.action === ACTION.SELL) this.addAskOrder(newOrder);
-        this.orderMatching();
+        this.display();
+        await this.orderMatching();
     }
     addAskOrder(newOrder) {
         this.askQueue.enqueue(newOrder);
@@ -55,7 +57,7 @@ class OrderBook {
         let queue;
         if (order.action === ACTION.BUY) queue = this.bidQueue;
         if (order.action === ACTION.SELL) queue = this.askQueue;
-        let index = queue.QueueMap[order.id];
+        let index = queue.QueueMap[order._id];
         let existingOrder = queue.getItem(index);
         if (
             existingOrder.status === STATUS.OPEN ||
@@ -88,37 +90,60 @@ class OrderBook {
         }
     }
     async orderMatching() {
+        console.log("Matching started\n");
         while (true) {
+            console.log("here");
             if (this.askQueue.size === 0 || this.bidQueue.size === 0) break;
             let askOrder = this.askQueue.top();
             let bidOrder = this.bidQueue.top();
+            console.log("Sell : \n");
+            console.log(askOrder);
 
+            console.log("Buy :\n");
+            console.log(bidOrder);
             let tradePrice, tradeQty;
             if (
                 askOrder.order_type !== ORDER_TYPE.MARKET_ORDER &&
                 bidOrder.order_type !== ORDER_TYPE.MARKET_ORDER
             ) {
-                if (askOrder.price <= bidOrder.price) {
+                console.log("\nBOTH LIMIT ORDERS");
+
+                if (askOrder.limit_price <= bidOrder.limit_price) {
                     if (askOrder.createdAt < bidOrder.createdAt)
-                        tradePrice = askOrder.price;
-                    else tradePrice = bidOrder.price;
+                        tradePrice = askOrder.limit_price;
+                    else tradePrice = bidOrder.limit_price;
                 } else break;
-            } else if (askOrder.order_type === ORDER_TYPE.MARKET_ORDER)
-                tradePrice = bidOrder.price;
-            else if (bidOrder.order_type === ORDER_TYPE.MARKET_ORDER)
-                tradePrice = askOrder.price;
+            } else if (
+                askOrder.order_type === ORDER_TYPE.MARKET_ORDER &&
+                bidOrder.order_type !== ORDER_TYPE.MARKET_ORDER
+            )
+                tradePrice = bidOrder.limit_price;
+            else if (
+                bidOrder.order_type === ORDER_TYPE.MARKET_ORDER &&
+                askOrder.order_type !== ORDER_TYPE.MARKET_ORDER
+            )
+                tradePrice = askOrder.limit_price;
             else tradePrice = this.openingPrice;
-            if (tradePrice) {
+            console.log("GOT A TRADE PRICE");
+            if (!tradePrice) {
+                console.log("Trade Not FOund");
+                break;
+            } else {
+                console.log("!!!GOT TRADED");
                 let minQty = Math.min(askOrder.quantity, bidOrder.quantity);
                 let trade = new Trade({
                     traded_price: tradePrice,
                     buyer_id: bidOrder.client_id,
                     seller_id: askOrder.client_id,
-                    buy_order_id: bidOrder.id,
-                    sell_order_id: askOrder.id,
+                    buy_order_id: bidOrder._id,
+                    sell_order_id: askOrder._id,
                     asset_symbol: this.symbol,
                     quantity: minQty,
                 });
+                console.log("----------Trade--------------");
+
+                console.log(trade);
+                console.log("-----------------------------");
                 this.currentPrice = tradePrice;
                 this.trades.push(trade);
 
@@ -150,16 +175,29 @@ class OrderBook {
                 let buyOrderBalanceChange =
                     bidOrder.order_cost - tradePrice * minQty;
                 let sellOrderBalanceChange = tradePrice * minQty;
-                await User.findByIdAndUpdate(bidOrder.client_id, {
+                console.log("WE GOT TILL HERE");
+
+                let res;
+                console.log(bidOrder.client_id, {
                     $inc: {
                         balance: buyOrderBalanceChange,
                     },
                 });
-                await User.findByIdAndUpdate(askOrder.client_id, {
+
+                res = await User.findByIdAndUpdate(bidOrder.client_id, {
+                    $inc: {
+                        balance: buyOrderBalanceChange,
+                    },
+                });
+                console.log(res);
+
+                res = await User.findByIdAndUpdate(askOrder.client_id, {
                     $inc: {
                         balance: sellOrderBalanceChange,
                     },
                 });
+                console.log(res);
+
                 let buyerHolding = await Holding.findOne({
                     client_id: bidOrder.client_id,
                     asset_symbol: this.symbol,
@@ -178,8 +216,8 @@ class OrderBook {
                         (buyerHolding.quantity + minQty);
                     buyerHolding.quantity = buyerHolding.quantity + minQty;
                 }
-                await buyerHolding.save();
-
+                res = await buyerHolding.save();
+                console.log(res);
                 // let sellerHolding = await Holding.findOne({
                 //     client_id: askOrder.client_id,
                 //     asset_symbol: this.symbol,
@@ -187,25 +225,29 @@ class OrderBook {
 
                 // if(sellerHolding.quantity )
 
-                await Order.findByIdAndUpdate(bidOrder.id, query1);
-                await Order.findByIdAndUpdate(askOrder.id, query2);
+                res = await Order.findByIdAndUpdate(bidOrder._id, query1);
+                console.log(res);
+                res = await Order.findByIdAndUpdate(askOrder._id, query2);
+                console.log(res);
                 trade = await trade.save();
-                await Asset.findOneAndUpdate(
+                console.log(trade);
+
+                res = await Asset.findOneAndUpdate(
                     { symbol: this.symbol },
                     { ltp: tradePrice }
                 );
+                console.log(res);
                 // await Holding.findOneAndUpdate({client_id: , })
             }
         }
+        console.log("Matching Ended\n");
     }
     display() {
-        const { executedOrders } = this;
-        let res = "";
-        for (let index in executedOrders) {
-            res += executedOrders[index].print();
-            res += "\n";
-        }
-        return res;
+        const { askQueue, bidQueue } = this;
+        console.log("-----------ASK---------\n");
+        console.log(askQueue.toArray());
+        console.log("-----------BUY---------\n");
+        console.log(bidQueue.toArray());
     }
 }
 

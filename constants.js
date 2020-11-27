@@ -1,6 +1,6 @@
 const ORDER_TYPE = {
-    LIMIT_ORDER: "LIMIT_ORDER",
-    MARKET_ORDER: "MARKET_ORDER",
+    LIMIT_ORDER: "LIMIT",
+    MARKET_ORDER: "MARKET",
 };
 const ACTION = {
     BUY: "BUY",

@@ -44,9 +44,9 @@ class PriorityQueue {
         if (r < size && comparator(items[r], items[largest])) largest = r;
 
         if (largest !== index) {
-            [QueueMap[items[largest].id], QueueMap[items[index].id]] = [
-                QueueMap[items[index].id],
-                QueueMap[items[largest].id],
+            [QueueMap[items[largest]._id], QueueMap[items[index]._id]] = [
+                QueueMap[items[index]._id],
+                QueueMap[items[largest]._id],
             ];
             [items[largest], items[index]] = [items[index], items[largest]];
             return heapify_down(largest);
@@ -56,9 +56,9 @@ class PriorityQueue {
         const { heapify_up, parent, comparator, items, QueueMap } = this;
         let p = parent(index);
         if (p >= 0 && comparator(items[index], items[p])) {
-            [QueueMap[items[p].id], QueueMap[items[index].id]] = [
-                QueueMap[items[index].id],
-                QueueMap[items[p].id],
+            [QueueMap[items[p]._id], QueueMap[items[index]._id]] = [
+                QueueMap[items[index]._id],
+                QueueMap[items[p]._id],
             ];
             [items[index], items[p]] = [items[p], items[index]];
             return heapify_up(p);
@@ -70,7 +70,7 @@ class PriorityQueue {
     }
     enqueue(item) {
         this.items.push(item);
-        this.QueueMap[item.id] = this.size;
+        this.QueueMap[item._id] = this.size;
         this.size++;
         return this.heapify_up(this.size - 1);
     }
@@ -79,7 +79,7 @@ class PriorityQueue {
     }
     dequeue() {
         if (this.size <= 0) throw new Error("Queue Empty");
-        delete QueueMap[items[0].id];
+        delete this.QueueMap[this.items[0]._id];
         this.remove(0);
     }
     remove(index) {

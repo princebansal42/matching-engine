@@ -5,22 +5,22 @@ const MatchingEngine = require("./MatchingEngine");
 const matchingEngine = new MatchingEngine();
 
 const pusher = require("./pusherConfig");
-const channel = pusher.subscribe("matching-engine");
+const channel = pusher.subscribe("match-engine");
 channel.bind("get assets", function (assets) {
     matchingEngine.init(assets);
     console.log(matchingEngine);
 });
-channel.bind("add order", function (data) {
+channel.bind("add order", async function (data) {
     console.log(data);
-    matchingEngine.addOrder(data);
+    await matchingEngine.addOrder(data);
 });
-channel.bind("edit order", function (data) {
+channel.bind("edit order", async function (data) {
     console.log(data);
-    matchingEngine.editOrder(data);
+    await matchingEngine.editOrder(data);
 });
-channel.bind("cancel order", function (data) {
+channel.bind("cancel order", async function (data) {
     console.log(data);
-    matchingEngine.cancelOrder(data);
+    await matchingEngine.cancelOrder(data);
 });
 
 console.log(matchingEngine);
